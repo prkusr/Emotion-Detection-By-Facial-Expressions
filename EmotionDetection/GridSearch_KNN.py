@@ -79,16 +79,12 @@ class Images:
         
         shuff = np.arange(x_features.shape[0])
         
-        n = len(shuff);
-        trainingSamples = n*7/10;    
-        
+#         n = len(shuff);
+#         trainingSamples = n*7/10;             
         np.random.shuffle(shuff)
-        self.x_train = x_features[shuff[:trainingSamples],:]
-        self.y_train = y_features[shuff[:trainingSamples]]
-         
-        self.x_valid = x_features[shuff[trainingSamples:],:]
-        self.y_valid = y_features[shuff[trainingSamples:]]
-         
+        self.x_train = x_features[shuff[:],:]
+        self.y_train = y_features[shuff[:]]
+                  
         f.close()
  
     def fit(self):
@@ -152,19 +148,37 @@ if __name__ == "__main__":
                         help="Restrict training to this many examples")
     args = parser.parse_args()
     
-    knn = Images()
-    knn.extractFeatures("../data/train.csv")
+    data = Images()
+    data.extractFeatures("../data/train.csv")    
     
-    knn.fit();
+    tuned_parameters = [{'kernel': ['rbf'], 'gamma': [1e-1 ,1e-2, 1e-3, 1e-4], 'C': [1, 10, 100, 1000]},
+                    {'kernel': ['poly'], 'C': [1, 10, 100, 1000], 'degree':[1,2,5,10]},
+            {'kernel': ['linear'], 'C': [1, 10, 100, 1000]}]
+
+    clf = GridSearchCV(SVC(C=1), tuned_parameters, cv=5)
     
-    confusion = knn.confusion_matrix(knn.x_valid, knn.y_valid);
-    print confusion
-    print("        \t" + "\t".join(nEmotions[x] for x in xrange(len(confusion))))
-    print("".join(["-"] * 150))
-    for ii in xrange(len(confusion)):
-        print("%s:\t" % nEmotions[ii] + "\t        ".join(str(confusion[ii].get(x, 0))
-                                       for x in xrange(len(confusion))))
-    print("Accuracy: %f" % knn.accuracy(confusion))
+    clf.fit(data.x_train, data.y_train);
+    
+    print("Best parameters :")
+    print()
+    print(clf.best_params_)
+    print()
+    print("Grid scores:")
+    print()
+    means = clf.cv_results_['mean_test_score']
+    stds = clf.cv_results_['std_test_score']
+    for mean, std, params in zip(means, stds, clf.cv_results_['params']):
+        print("%0.3f (+/-%0.03f) for %r" % (mean, std * 2, params))
+    print()        
+    
+#     confusion = knn.confusion_matrix(knn.x_valid, knn.y_valid);
+#     print confusion
+#     print("        \t" + "\t".join(nEmotions[x] for x in xrange(len(confusion))))
+#     print("".join(["-"] * 150))
+#     for ii in xrange(len(confusion)):
+#         print("%s:\t" % nEmotions[ii] + "\t        ".join(str(confusion[ii].get(x, 0))
+#                                        for x in xrange(len(confusion))))
+#     print("Accuracy: %f" % knn.accuracy(confusion))
     
     # -----------------------------------
     # Plotting Examples 
