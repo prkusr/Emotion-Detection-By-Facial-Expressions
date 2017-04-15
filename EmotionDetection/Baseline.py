@@ -1,17 +1,12 @@
-import argparse
-import numpy as np 
-
-from sklearn.svm import SVC
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
-import matplotlib.pyplot as plt
-from imutils import face_utils
-import imutils
-import dlib
 import cv2
 import csv
-from sklearn.neighbors import KNeighborsClassifier
 from collections import defaultdict
+import dlib
+from imutils import face_utils
+
+from sklearn.neighbors import KNeighborsClassifier
+
+import numpy as np
 
 mLEFT_EYE = 'left_eye'
 mLEFT_EYEBROW = 'left_eyebrow'
@@ -66,12 +61,8 @@ class Images:
                                          width[mLEFT_EYE], height[mLEFT_EYE], width[mRIGHT_EYE], height[mRIGHT_EYE],
                                          width[mMOUTH], height[mMOUTH]]));
             
-            n +=1;                             
-            if n>1000:
-                break;
-             
-        print type(x_features)
-        print len(x_features[0])
+        # print type(x_features)
+        # print len(x_features[0])
         
         x_features = np.array(x_features);
         y_features = np.array(y_features);  
@@ -104,7 +95,6 @@ class Images:
         :param test_x: Test data representation
         :param test_y: Test data answers
         """
-
         # Finish this function to build a dictionary with the
         # mislabeled examples.  You'll need to call the classify
         # function for each example.
@@ -142,16 +132,8 @@ class Images:
         else:
             return 0.0
  
-
-
-       
 if __name__ == "__main__":
 
-    parser = argparse.ArgumentParser(description='SVM classifier options')
-    parser.add_argument('--limit', type=int, default=-1,
-                        help="Restrict training to this many examples")
-    args = parser.parse_args()
-    
     knn = Images()
     knn.extractFeatures("../data/train.csv")
     
