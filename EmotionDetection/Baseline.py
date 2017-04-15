@@ -1,15 +1,15 @@
 import argparse
-import numpy as np 
-
-from sklearn.svm import SVC
-from sklearn.model_selection import GridSearchCV
-from sklearn.metrics import classification_report
-import matplotlib.pyplot as plt
-from imutils import face_utils
-import imutils
-import dlib
-import cv2
 import csv
+
+import cv2
+import dlib
+import numpy as np
+from imutils import face_utils
+from sklearn.metrics import accuracy_score,confusion_matrix
+from sklearn.neighbors import KNeighborsClassifier
+
+import numpy as np
+import math
 
 mLEFT_EYE = 'left_eye'
 mLEFT_EYEBROW = 'left_eyebrow'
@@ -55,8 +55,8 @@ class Images:
                                          width[mLEFT_EYE], height[mLEFT_EYE], width[mRIGHT_EYE], height[mRIGHT_EYE],
                                          width[mMOUTH], height[mMOUTH]]));
             
-        print type(x_features)
-        print len(x_features[0])
+        # print type(x_features)
+        # print len(x_features[0])
         
         x_features = np.array(x_features);
         y_features = np.array(y_features);  
@@ -76,6 +76,29 @@ class Images:
          
         f.close()
 
+    def processWithKnn(self):
+        knn = KNeighborsClassifier(n_neighbors=5, weights='uniform', algorithm='auto', n_jobs=-1)
+        knn.fit(self.x_train,self.y_train)
+        prediction = knn.predict(self.x_valid)
+        validationAccuracy = accuracy_score(self.y_valid,prediction)
+
+        print validationAccuracy
+        print knn.score(self.x_valid,self.y_valid)
+
+
+        # Wrong confusion matrix
+        # validationConfusionMatrix = confusion_matrix(self.y_valid,prediction,[0,1])
+        # total_accuracy = (validationConfusionMatrix[0, 0] + validationConfusionMatrix[1, 1]) / float(
+        #     np.sum(validationConfusionMatrix))
+        # class1_accuracy = (validationConfusionMatrix[0, 0] / float(np.sum(validationConfusionMatrix[0, :])))
+        # class2_accuracy = (validationConfusionMatrix[1, 1] / float(np.sum(validationConfusionMatrix[1, :])))
+        #
+        # print(validationConfusionMatrix)
+        # print('Total accuracy: %.5f' % total_accuracy)
+        # print('Class1 accuracy: %.5f' % class1_accuracy)
+        # print('Class2 accuracy: %.5f' % class2_accuracy)
+        # print('Geometric mean accuracy: %.5f' % math.sqrt((class1_accuracy * class2_accuracy)))
+
 if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='SVM classifier options')
@@ -83,7 +106,11 @@ if __name__ == "__main__":
                         help="Restrict training to this many examples")
     args = parser.parse_args()
     
-    data = Images("../data/train.csv")
+    imageClass = Images("../data/train.csv")
+    imageClass.processWithKnn()
+
+
+
     
     # -----------------------------------
     # Plotting Examples 
