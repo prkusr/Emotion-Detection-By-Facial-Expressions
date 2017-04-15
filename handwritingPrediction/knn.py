@@ -45,8 +45,7 @@ class Numbers:
         self.test_x = []
         spamreader = csv.reader(f, delimiter=',', quotechar='|') 
         count = 0
-        from random import *
-        shuffle(spamreader)
+        
         for row in spamreader:
                 #print row
                 if count == 0 :
