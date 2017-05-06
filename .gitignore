@@ -90,3 +90,6 @@ ENV/
 
 #Eclipse File Ignore
 .metadata/*.*
+
+#Pychram File ignore
+.idea/*.*
