@@ -1,4 +1,4 @@
-# Emotion Detection Facial Expressions and Gender Predcition from handwriting
+# Emotion Detection from Facial Expressions and Gender Predcition from handwriting
 Machine learning project repo
 
 * Emotion Detection - Emotion detection: We try to predict the emotion expressed by a person in the given image. Dataset: csv files containing emotions column along with pixel values of facial images (labels) . (https://inclass.kaggle.com/c/facial-keypoints-detector/data).
